@@ -1,0 +1,9 @@
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.csprojAssemblyReference.cache
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.Form1.resources
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.Properties.Resources.resources
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.csproj.GenerateResource.cache
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\bin\Debug\Snake_Intelligence.exe.config
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\bin\Debug\Snake_Intelligence.exe
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\bin\Debug\Snake_Intelligence.pdb
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.exe
+T:\Projects\VisualStudio\Snake_Intelligence\Snake_Intelligence\obj\Debug\Snake_Intelligence.pdb
