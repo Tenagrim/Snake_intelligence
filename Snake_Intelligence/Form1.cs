@@ -61,6 +61,11 @@ namespace Snake_Intelligence
                             brush = Brushes.Green;
                             DrawPoint(brush, new Point(j, i));
                             break;
+                        case 3:
+                            break;
+                            //brush = Brushes.Blue;
+                            //DrawPoint(brush, new Point(j, i));
+                            //break;
                     }
                 }
             }
@@ -79,10 +84,14 @@ namespace Snake_Intelligence
             {
                 for (int j = 0; j < field.snake.brain.Sizes[i]; j++)
                 {
-                   off_y =  n_offset.y+ ((j  - field.snake.brain.Sizes[i]) * n_neuron_Heigth);
-                  //  Debug.Write($"{off_y}  ");
-                   n_graphics.FillEllipse(Brushes.White, i * n_layer_width + n_offset.x, j  * n_neuron_Heigth+ off_y, n_neuron_Size, n_neuron_Size);
-                   n_graphics.DrawString(field.snake.brain.Layers[i][j].ToString(), SystemFonts.DefaultFont, Brushes.Blue, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + 4 + off_y);
+                    off_y = n_offset.y + ((j - field.snake.brain.Sizes[i]) * n_neuron_Heigth);
+                    //  Debug.Write($"{off_y}  ");
+
+            
+                        n_graphics.FillEllipse(Brushes.White, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + off_y, n_neuron_Size, n_neuron_Size);
+                    if (i == field.snake.brain.Sizes.Length - 1 && !(field.snake.brain.Layers[i][j] == field.snake.brain.Layers[i].Max()))
+                        n_graphics.FillEllipse(Brushes.Gray, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + off_y, n_neuron_Size, n_neuron_Size);
+                    n_graphics.DrawString(field.snake.brain.Layers[i][j].ToString(), SystemFonts.DefaultFont, Brushes.Blue, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + 4 + off_y);
                 }
                 //Debug.WriteLine("");
             }
@@ -93,7 +102,7 @@ namespace Snake_Intelligence
         {
             field = new Field(initialSize);
             offset = new Point((pictureBox1.Width / 2) - (field.Width * point_size / 2), (pictureBox1.Height / 2) - (field.Height * point_size / 2));
-            n_offset = new Point((pictureBox2.Width / 2) - (field.snake.brain.Sizes.Length * n_layer_width / 2) + pictureBox2.Width / 7, (pictureBox2.Height / 2) - (field.snake.brain.Sizes.Max() * n_neuron_Heigth / 2) + pictureBox2.Height / 6);
+            n_offset = new Point((pictureBox2.Width / 2) - (field.snake.brain.Sizes.Length * n_layer_width / 2) + pictureBox2.Width / 10, (pictureBox2.Height / 2) - (field.snake.brain.Sizes.Max() * n_neuron_Heigth / 2) + pictureBox2.Height / 6);
             field.MakeFood();
             DisplayField();
             DisplayNN();
@@ -101,10 +110,15 @@ namespace Snake_Intelligence
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+        }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (timer1.Enabled)
+                return base.ProcessCmdKey(ref msg, keyData);
             Point dir = new Point(1, 0);
             Debug.WriteLine("key");
-            switch (e.KeyCode)
+            switch (keyData)
             {
                 case Keys.W:
                     dir.x = 0;
@@ -124,7 +138,24 @@ namespace Snake_Intelligence
                     break;
             }
             field.Step(field.snake, dir);
+            field.Show();
+            field.snake.brain.Calc();
             DisplayField();
+            DisplayNN();
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //field = new Field(initialSize);
+            //field.MakeFood();
+            field.ReloadSnake();
+            DisplayField();
+            field.Show();
+            field.snake.brain.Calc();
+            DisplayNN();
+            //button1.Focus( = false;
+            pictureBox1.Focus();
         }
     }
 }

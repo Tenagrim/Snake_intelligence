@@ -87,7 +87,23 @@ namespace Snake_Intelligence
         public Point ChooseDirection()
         {
             Point res = new Point();
-
+            float max = brain.Layers[brain.Layers.Length - 1].Max();
+            int index = Array.IndexOf(brain.Layers[brain.Layers.Length - 1], max);
+            switch (index)
+            {
+                case 0:
+                    res.y = -1;
+                    break;
+                case 1:
+                    res.x = 1;
+                    break;
+                case 2:
+                    res.y = 1;
+                    break;
+                case 3:
+                    res.x = -1;
+                    break;
+            }
             return res;
         }
 
@@ -106,9 +122,9 @@ namespace Snake_Intelligence
             alive = true;
         }
 
-        public void See()
+        public void See(float[] data)
         {
-
+            brain.Input(data);
         }
     }
 }
