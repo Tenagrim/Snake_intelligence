@@ -15,10 +15,13 @@ namespace Snake_Intelligence
         private float[][] layers;
         private int[] sizes;
         private float[][,] weights;
+        Random rand;
+        private float l_c = 0.1F;
 
         public NN()
         {
             //sizes = new int[] { 13, 15, 15, 4 };
+            rand = new Random();
 
             sizes = new int[] { 11, 10, 10, 4 };
 
@@ -41,7 +44,7 @@ namespace Snake_Intelligence
             {
                 weights[i] = new float[sizes[i], sizes[i] + 1];
             }
-            Random rand = new Random();
+
             float tmp;
             for (int k = 0; k < weights.Length; k++)
             {
@@ -91,6 +94,16 @@ namespace Snake_Intelligence
             }
         }
 
+        public void Mutate()
+        {
+            float tmp = (float)rand.NextDouble();
+            int i = rand.Next(0, Sizes.Length);
+            weights[i][rand.Next(0,weights[i].GetLength(0) -1), weights[i].GetLength(1) - 1] = tmp / 10 - 0.5F;
+        }
 
+        private void backpropagation()
+        { 
+            
+        }
     }
 }

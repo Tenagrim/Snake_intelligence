@@ -10,6 +10,8 @@ namespace Snake_Intelligence
     {
         public Snake snake { get; set; }
 
+       // public Snake[] Population { get; set; }
+
         public int Width { get; set; }
         public int Height { get; set; }
         public int[,] field { get; set; }
@@ -33,6 +35,8 @@ namespace Snake_Intelligence
             }
             projectSnake();
         }
+
+
 
         private void projectSnake()
         {
