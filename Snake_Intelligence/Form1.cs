@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Snake_Intelligence
 {
@@ -23,6 +25,7 @@ namespace Snake_Intelligence
         private int n_neuron_Heigth = 15;
         private int n_neuron_Size = 20;
         private Point initialSize = new Point(35, 45);
+        bool running = false;
         public Form1()
         {
             InitializeComponent();
@@ -62,10 +65,10 @@ namespace Snake_Intelligence
                             DrawPoint(brush, new Point(j, i));
                             break;
                         case 3:
-                            break;
-                            //brush = Brushes.Blue;
-                            //DrawPoint(brush, new Point(j, i));
                             //break;
+                            brush = Brushes.Blue;
+                            DrawPoint(brush, new Point(j, i));
+                            break;
                     }
                 }
             }
@@ -73,6 +76,9 @@ namespace Snake_Intelligence
                 DrawPoint(Brushes.Gray, p);
             DrawPoint(Brushes.SlateGray, field.snake.Body[0]);
             pictureBox1.Refresh();
+            label1.Text = $"Generatoin: {field.GenerationCount}";
+            label3.Text = $"Length    : {field.snake.Length}";
+            label4.Text = $"Way       : {field.snake.Way}";
         }
 
         private void DisplayNN()
@@ -87,8 +93,8 @@ namespace Snake_Intelligence
                     off_y = n_offset.y + ((j - field.snake.brain.Sizes[i]) * n_neuron_Heigth);
                     //  Debug.Write($"{off_y}  ");
 
-            
-                        n_graphics.FillEllipse(Brushes.White, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + off_y, n_neuron_Size, n_neuron_Size);
+
+                    n_graphics.FillEllipse(Brushes.White, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + off_y, n_neuron_Size, n_neuron_Size);
                     if (i == field.snake.brain.Sizes.Length - 1 && !(field.snake.brain.Layers[i][j] == field.snake.brain.Layers[i].Max()))
                         n_graphics.FillEllipse(Brushes.Gray, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + off_y, n_neuron_Size, n_neuron_Size);
                     n_graphics.DrawString(field.snake.brain.Layers[i][j].ToString(), SystemFonts.DefaultFont, Brushes.Blue, i * n_layer_width + n_offset.x, j * n_neuron_Heigth + 4 + off_y);
@@ -114,6 +120,7 @@ namespace Snake_Intelligence
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            /*
             if (timer1.Enabled)
                 return base.ProcessCmdKey(ref msg, keyData);
             Point dir = new Point(1, 0);
@@ -142,7 +149,9 @@ namespace Snake_Intelligence
             field.snake.brain.Calc();
             DisplayField();
             DisplayNN();
+            */
             return base.ProcessCmdKey(ref msg, keyData);
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -150,12 +159,89 @@ namespace Snake_Intelligence
             //field = new Field(initialSize);
             //field.MakeFood();
             field.ReloadSnake();
+            field.reloadField();
             DisplayField();
             field.Show();
             field.snake.brain.Calc();
             DisplayNN();
             //button1.Focus( = false;
             pictureBox1.Focus();
+        }
+
+        private void SaveField(string filename, Field world)
+        {
+            //  FileStream fs = new FileStream(filename, FileMode.Truncate);
+            //  fs.Close();
+
+            FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(fs, world);
+            fs.Close();
+        }
+        private Field LoadField(string filename)
+        {
+            Field res;
+            FileStream fs = new FileStream(filename, FileMode.Open);
+            BinaryFormatter bf = new BinaryFormatter();
+            res = (Field)bf.Deserialize(fs);
+            fs.Close();
+            return res;
+        }
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (!running)
+                timer1.Start();
+            else
+                timer1.Stop();
+            running = !running;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (!field.snake.Alive)
+            {
+                timer1.Stop();
+                field.RunPopulation();
+                field.NextGen();
+                field.reloadField();
+                timer1.Start();
+            }
+
+            field.Step();
+            if (field.checkLoop())
+                field.snake.Kill();
+            DisplayField();
+            DisplayNN();
+
+            if (field.GenerationCount % 300 == 0)
+            {
+                string save = $"autosave{field.GenerationCount % 1000}";
+                SaveField(save, field);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SaveField(textBox1.Text, field);
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            field = LoadField(textBox1.Text);
+            DisplayField();
+            DisplayNN();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            timer1.Interval = (int)numericUpDown1.Value;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

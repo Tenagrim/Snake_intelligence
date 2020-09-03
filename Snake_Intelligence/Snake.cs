@@ -7,6 +7,7 @@ using System.Diagnostics;
 
 namespace Snake_Intelligence
 {
+    [Serializable]
     class Snake
     {
         public List<Point> Body { get { return body; } }
@@ -14,10 +15,12 @@ namespace Snake_Intelligence
         private List<Point> body;
         public int Point { get; } // 1 - up / -1 - left / 2 - down / -2 - right
         public Point direction { get; set; }
+        public bool Alive { get { return alive; } }
         private bool alive;
         private Point tmp;
         public NN brain;
         public int Length { get { return length; } }
+        public int Way { get; set; }
         private int length;
         public Snake()
         {
@@ -30,6 +33,7 @@ namespace Snake_Intelligence
             brain = new NN();
             tmp = new Point();
             length = 3;
+            Way = 0;
         }
         public Snake(int x, int y)
         {
@@ -40,7 +44,22 @@ namespace Snake_Intelligence
             body.Add(new Point(x, y + 1));
             alive = true;
             brain = new NN();
-            length = 3;
+            length = 2;
+            Way = 0;
+        }
+
+        public Snake(int x, int y, Snake parent)
+        {
+            direction = new Point(1, 0);
+            tmp = new Point();
+            body = new List<Point>();
+            body.Add(new Point(x, y));
+            body.Add(new Point(x, y + 1));
+            alive = true;
+            //brain = new NN();
+            brain = new NN(parent.brain);
+            length = 2;
+            Way = 0;
         }
 
         public void Step(Point direction, bool eat)
@@ -54,6 +73,7 @@ namespace Snake_Intelligence
             Point t = new Point();
             if (!alive)
                 return;
+            Way++;
             tmp = body[0];
             body[0] = body[0] + direction;
             if (body[1] == body[0])
@@ -79,9 +99,9 @@ namespace Snake_Intelligence
                 if (body[i] == body[0])
                     Kill();
             }
-            Debug.WriteLine($"Len: {body.Count}");
-            foreach (var p in body)
-                Debug.WriteLine(p);
+           // Debug.WriteLine($"Len: {body.Count}");
+           // foreach (var p in body)
+               // Debug.WriteLine(p);
         }
 
         public Point ChooseDirection()
@@ -107,10 +127,14 @@ namespace Snake_Intelligence
             return res;
         }
 
+        public void Mutate()
+        {
+            brain.Mutate();
+        }
         public void Kill()
         {
             alive = false;
-            Debug.WriteLine("Kill");
+          //  Debug.WriteLine("Kill");
         }
 
         public void Reload(int x, int y)
@@ -125,6 +149,10 @@ namespace Snake_Intelligence
         public void See(float[] data)
         {
             brain.Input(data);
+        }
+        public override string ToString()
+        {
+            return $"Len: {Length} Head: {body[0]}";
         }
     }
 }
